@@ -5,12 +5,12 @@ import numpy as np
 
 class PriorityQueue(object): 
 
-    def __init__(self, DEBUG=False, LOG=False): 
+    def __init__(self, DEBUG=False): 
         self.DEBUG = DEBUG 
 
         self.queue = [] 
         self.set = set()
-        self.state2queue = {}
+        self.repr2queue = {}
   
     # for checking if the queue is empty 
     def is_empty(self): 
@@ -19,21 +19,21 @@ class PriorityQueue(object):
     # for inserting an element in the queue 
     def push(self, data): 
         
-        if tuple(data.state) in self.set:
+        if tuple(data.repr) in self.set:
             # delete the earlier entry and add new one
             for i in range(len(self.queue)):
-                if np.array_equal(self.queue[i].state, data.state):
+                if np.array_equal(self.queue[i].repr, data.repr):
                     del self.queue[i]
 
             self.queue.append(data) 
-            self.state2queue[tuple(data.state)] = data 
+            self.repr2queue[tuple(data.repr)] = data 
         else : 
             self.queue.append(data) 
-            self.set.add(tuple(data.state))
-            self.state2queue[tuple(data.state)] = data 
+            self.set.add(tuple(data.repr))
+            self.repr2queue[tuple(data.repr)] = data 
 
         if self.DEBUG:
-            print([state.state for state in self.queue])
+            print([state.repr for state in self.queue])
 
     # for size of the queue
     def size(self):
@@ -43,13 +43,13 @@ class PriorityQueue(object):
     def pop(self): 
 
         try: 
-            max = 0
+            min = 0
             for i in range(len(self.queue)): 
-                if self.queue[i].cost >= self.queue[max].cost: 
-                    max = i 
+                if self.queue[i].f_cost <= self.queue[min].f_cost: 
+                    min = i 
             
-            item = self.queue[max] 
-            del self.queue[max] 
+            item = self.queue[min] 
+            del self.queue[min] 
             return item 
 
         except IndexError: 
@@ -60,5 +60,5 @@ class PriorityQueue(object):
         return tuple(state) in self.set
 
     def return_state(self, state):
-        return self.state2queue[tuple(state)]
+        return self.repr2queue[tuple(state)]
             
